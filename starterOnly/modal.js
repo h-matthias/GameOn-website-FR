@@ -9,9 +9,12 @@ function editNav() {
 
 // DOM Elements
 const modalbg = document.querySelector('.bground')
+const modalbgConfirm = document.querySelector('.bgroundConfirm')
 const modalBtn = document.querySelectorAll('.modal-btn')
 const formData = document.querySelectorAll('.formData')
 const modalClose = document.querySelector('.close')
+const modalCloseConfirm = document.querySelector('.closeConfirm')
+const modalCloseConfirmBtn = document.querySelector('.closeConfirmBtn')
 // DOM Element for validation variable
 const first = document.querySelector('#first')
 const last = document.querySelector('#last')
@@ -41,28 +44,59 @@ email.addEventListener('blur', () =>
 	validInputElement(email, checkEmail(email.value), errorElement.email)
 )
 email.addEventListener('input', () =>
-	validInputElement(email, 	checkEmail(email.value), errorElement.email)
+	validInputElement(email, checkEmail(email.value), errorElement.email)
+)
+birthdate.addEventListener('input', () =>
+	validInputElement(
+		birthdate,
+		checkBirthdate(birthdate.value),
+		errorElement.birthdate
+	)
+)
+birthdate.addEventListener('blur', () =>
+	validInputElement(
+		birthdate,
+		checkBirthdate(birthdate.value),
+		errorElement.birthdate
+	)
 )
 quantity.addEventListener('blur', () =>
-	validInputElement(quantity, checkNumber(quantity.value), errorElement.quantity)
+	validInputElement(
+		quantity,
+		checkNumber(quantity.value),
+		errorElement.quantity
+	)
 )
 quantity.addEventListener('input', () =>
-	validInputElement(quantity, checkNumber(quantity.value), errorElement.quantity)
+	validInputElement(
+		quantity,
+		checkNumber(quantity.value),
+		errorElement.quantity
+	)
+)
+cities.forEach((city) =>
+	city.addEventListener('change', () =>
+		validInputElement(city, checkCity, errorElement.city)
+	)
 )
 terms.addEventListener('change', () =>
 	validInputElement(terms, checkTerms(terms.checked), errorElement.terms)
 )
 
 // launch modal event
-modalBtn.forEach((btn) => btn.addEventListener('click', launchModal))
-modalClose.addEventListener('click', closeModal)
+modalBtn.forEach((btn) =>
+	btn.addEventListener('click', () => launchModal(modalbg))
+)
+modalClose.addEventListener('click', () => closeModal(modalbg))
+modalCloseConfirm.addEventListener('click', () => closeModal(modalbgConfirm))
+modalCloseConfirmBtn.addEventListener('click', () => closeModal(modalbgConfirm))
 // launch modal form
-function launchModal() {
-	modalbg.style.display = 'block'
+function launchModal(element) {
+	element.style.display = 'block'
 }
 // Close Modal form
-function closeModal() {
-	modalbg.style.display = 'none'
+function closeModal(element) {
+	element.style.display = 'none'
 }
 
 // variable object error
@@ -151,7 +185,7 @@ function checkNumber(num) {
 function checkBirthdate(birthdate) {
 	const date = new Date()
 	const year = date.getFullYear()
-	const birth = new Date(birthdate.value)
+	const birth = new Date(birthdate)
 	if (birth == 'Invalid Date') {
 		return false
 	}
@@ -168,12 +202,14 @@ function checkBirthdate(birthdate) {
  * @return {Boolean} if city is checked
  */
 function checkCity() {
+	let cheked = false
 	cities.forEach((city) => {
+		console.log(city.checked)
 		if (city.checked) {
-			return true
+			cheked = true
 		}
 	})
-	return false
+	return cheked
 }
 
 /**
@@ -242,6 +278,9 @@ function validate() {
 	} else if (!checkTerms(terms.checked)) {
 		applyErrorViewInput(terms, errorElement.terms)
 	} else {
+		form.reset()
+		closeModal(modalbg)
+		launchModal(modalbgConfirm)
 		console.log('valider !!!! Bravo')
 	}
 }
